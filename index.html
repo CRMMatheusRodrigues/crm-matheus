@@ -93,10 +93,10 @@ async function checkCloud() {
 
 // Mapear lead do Supabase pro formato do CRM
 function mapLeadFromDB(row) {
-  return {id: row.id, nome: row.nome||'', telefone: row.telefone||'', origem: row.origem||'', status: row.status||'', etapa: row.etapa||'', regiao: row.regiao||'', resultado: row.resultado||''};
+  return {id: row.id, nome: row.nome||'', telefone: row.telefone||'', origem: row.origem||'', status: row.status||'', etapa: row.etapa||'', regiao: row.regiao||'', resultado: row.resultado||'', notas: row.notas||'', ultimoContato: row.ultimo_contato||''};
 }
 function mapLeadToDB(l) {
-  return {nome: l.nome||'', telefone: l.telefone||'', origem: l.origem||'', status: l.status||'', etapa: l.etapa||'', regiao: l.regiao||'', resultado: l.resultado||''};
+  return {nome: l.nome||'', telefone: l.telefone||'', origem: l.origem||'', status: l.status||'', etapa: l.etapa||'', regiao: l.regiao||'', resultado: l.resultado||'', notas: l.notas||'', ultimo_contato: l.ultimoContato||''};
 }
 
 function mapVendaFromDB(row) {
@@ -107,10 +107,10 @@ function mapVendaToDB(v) {
 }
 
 function mapIndicFromDB(row) {
-  return {id: row.id, indicou: row.indicou||'', comprou: row.comprou||'', projeto: row.projeto||'', unidade: row.unidade||'', data: row.data||'', tipo: row.tipo||'', valor: row.valor||'', pago: row.pago||'nao'};
+  return {id: row.id, indicou: row.indicou||'', telIndicou: row.tel_indicou||'', comprou: row.comprou||'', projeto: row.projeto||'', unidade: row.unidade||'', data: row.data||'', tipo: row.tipo||'', valor: row.valor||'', pago: row.pago||'nao'};
 }
 function mapIndicToDB(x) {
-  return {indicou: x.indicou||'', comprou: x.comprou||'', projeto: x.projeto||'', unidade: x.unidade||'', data: x.data||'', tipo: x.tipo||'', valor: x.valor||'', pago: x.pago||'nao'};
+  return {indicou: x.indicou||'', tel_indicou: x.telIndicou||'', comprou: x.comprou||'', projeto: x.projeto||'', unidade: x.unidade||'', data: x.data||'', tipo: x.tipo||'', valor: x.valor||'', pago: x.pago||'nao'};
 }
 
 // Pull dados da nuvem pro state local
@@ -947,6 +947,190 @@ td{
 }
 .td-idx{color:var(--text-3);font-size:13px;font-weight:600;min-width:40px}
 .td-name{font-weight:600;color:var(--text);font-size:14.5px;min-width:180px}
+
+/* Eye toggle */
+.btn-eye{
+
+/* ============================================================
+   HOVER POPOVERS — Notas & Último Contato
+   ============================================================ */
+.popover{
+  position:fixed;
+  z-index:500;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  box-shadow:0 24px 48px -12px rgba(15,23,42,.18), 0 0 0 1px rgba(79,70,229,.08);
+  padding:0;
+  width:320px;
+  opacity:0;
+  transform:translateY(8px) scale(.97);
+  transition:opacity .2s ease, transform .2s ease;
+  pointer-events:none;
+}
+.popover.show{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+.popover-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 18px 10px;
+  border-bottom:1px solid var(--border);
+}
+.popover-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.popover-title-icon{
+  width:26px;height:26px;
+  border-radius:7px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.popover-close{
+  width:24px;height:24px;
+  border-radius:6px;
+  background:transparent;
+  border:none;
+  color:var(--text-3);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  transition:all .15s;
+}
+.popover-close:hover{background:var(--surface-3);color:var(--text)}
+.popover-body{
+  padding:14px 18px 16px;
+}
+.popover-textarea{
+  width:100%;
+  min-height:80px;
+  max-height:160px;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  color:var(--text);
+  font-size:13px;
+  font-family:'Inter',sans-serif;
+  font-weight:500;
+  line-height:1.55;
+  resize:vertical;
+  outline:none;
+  transition:border-color .18s, box-shadow .18s;
+}
+.popover-textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(79,70,229,.1);
+  background:var(--surface);
+}
+.popover-textarea::placeholder{color:var(--text-3)}
+.popover-saved{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  font-size:11px;
+  color:var(--green);
+  font-weight:600;
+  margin-top:8px;
+  opacity:0;
+  transition:opacity .3s;
+}
+.popover-saved.show{opacity:1}
+
+/* Último contato popover */
+.popover-contact-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+.popover-contact-row .inp{
+  flex:1;
+  padding:10px 12px;
+  font-size:13px;
+}
+.popover-contact-display{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  margin-bottom:10px;
+}
+.popover-contact-label{
+  font-size:11px;
+  color:var(--text-3);
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.popover-contact-date{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:15px;
+  font-weight:700;
+  color:var(--text);
+}
+.popover-contact-ago{
+  font-size:11.5px;
+  color:var(--text-3);
+  font-weight:500;
+  margin-left:auto;
+}
+.popover-contact-ago.warn{color:var(--amber)}
+.popover-contact-ago.danger{color:var(--rose)}
+
+/* Name hover hint */
+.td-name-hover{
+  position:relative;
+}
+.td-name-hover::after{
+  content:'';
+  position:absolute;
+  bottom:-2px;
+  left:0;
+  width:0;
+  height:2px;
+  background:var(--primary);
+  border-radius:2px;
+  transition:width .3s ease;
+}
+.td-name-hover.loading::after{
+  width:100%;
+  transition:width 3s linear;
+}
+.td-phone-hover{
+  position:relative;
+}
+.td-phone-hover::after{
+  content:'';
+  position:absolute;
+  bottom:-2px;
+  left:0;
+  width:0;
+  height:2px;
+  background:var(--accent);
+  border-radius:2px;
+  transition:width .3s ease;
+}
+.td-phone-hover.loading::after{
+  width:100%;
+  transition:width 2s linear;
+}
 
 /* Eye toggle */
 .btn-eye{
@@ -2522,6 +2706,7 @@ document.addEventListener('keydown', dismissWelcome, {once:true});
                 <tr>
                   <th>#</th>
                   <th>Quem Indicou</th>
+                  <th>Telefone</th>
                   <th>Cliente Comprador</th>
                   <th>Projeto</th>
                   <th>Unidade</th>
@@ -2900,9 +3085,15 @@ document.addEventListener('keydown', dismissWelcome, {once:true});
       </button>
     </div>
     <div class="mod-b">
-      <div class="fld">
-        <label class="fld-lbl">Nome do cliente que indicou <span>*</span></label>
-        <input class="inp" id="f-i-indicou" type="text" placeholder="Ex: Maria Silva">
+      <div class="fld-row">
+        <div class="fld">
+          <label class="fld-lbl">Nome do cliente que indicou <span>*</span></label>
+          <input class="inp" id="f-i-indicou" type="text" placeholder="Ex: Maria Silva">
+        </div>
+        <div class="fld">
+          <label class="fld-lbl">Telefone de quem indicou</label>
+          <input class="inp" id="f-i-telind" type="text" placeholder="(11) 98765-4321">
+        </div>
       </div>
       <div class="fld">
         <label class="fld-lbl">Nome do cliente que comprou <span>*</span></label>
@@ -2977,6 +3168,57 @@ document.addEventListener('keydown', dismissWelcome, {once:true});
         <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.885 3.488"/></svg>
         Abrir WhatsApp
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- POPOVER — NOTAS DO LEAD -->
+<div class="popover" id="pop-notas">
+  <div class="popover-header">
+    <div class="popover-title">
+      <div class="popover-title-icon" style="background:rgba(79,70,229,.1);color:var(--primary)">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <span id="pop-notas-name">Notas</span>
+    </div>
+    <button class="popover-close" onclick="closePopover('pop-notas')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="popover-body">
+    <textarea class="popover-textarea" id="pop-notas-text" placeholder="Anote observações sobre este cliente... Ex: tem 2 filhos, quer 3 quartos, orçamento 400k, prefere andar alto" oninput="autoSaveNota()"></textarea>
+    <div class="popover-saved" id="pop-notas-saved">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Salvo automaticamente
+    </div>
+  </div>
+</div>
+
+<!-- POPOVER — ÚLTIMO CONTATO -->
+<div class="popover" id="pop-contato">
+  <div class="popover-header">
+    <div class="popover-title">
+      <div class="popover-title-icon" style="background:rgba(6,182,212,.1);color:var(--accent)">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <span id="pop-contato-name">Último Contato</span>
+    </div>
+    <button class="popover-close" onclick="closePopover('pop-contato')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="popover-body">
+    <div id="pop-contato-current"></div>
+    <div class="popover-contact-row">
+      <input class="inp" id="pop-contato-date" type="date" style="flex:1">
+      <button class="btn-add" onclick="saveUltimoContato()" style="padding:10px 16px;font-size:12.5px;white-space:nowrap">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Registrar
+      </button>
+    </div>
+    <div class="popover-saved" id="pop-contato-saved">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Contato registrado
     </div>
   </div>
 </div>
@@ -3093,6 +3335,7 @@ function exportBackup(){
     const indicData = state.indicacoes.map((x,i) => ({
       '#': i+1,
       'Quem Indicou': x.indicou || '',
+      'Telefone Indicador': x.telIndicou || '',
       'Cliente Comprador': x.comprou || '',
       'Projeto': x.projeto || '',
       'Unidade': x.unidade || '',
@@ -3664,8 +3907,8 @@ function renderTbl(){
   document.getElementById('tb').innerHTML = p.map((l,i) => `
     <tr>
       <td class="td-idx">${String(s+i+1).padStart(2,'0')}</td>
-      <td class="td-name" onclick="showLeadDetail(${l.id})" style="cursor:pointer;text-decoration:underline;text-decoration-color:transparent;text-decoration-thickness:2px;transition:text-decoration-color .15s" onmouseover="this.style.textDecorationColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.textDecorationColor='transparent';this.style.color='var(--text)'" title="Ver detalhes">${l.nome||'–'}</td>
-      <td>${phoneCell(l.telefone, l.id)}</td>
+      <td class="td-name td-name-hover" onclick="showLeadDetail(${l.id})" style="cursor:pointer" title="Clique pra ver detalhes" onmouseenter="startHoverNota(event,${l.id})" onmouseleave="cancelHoverNota(${l.id})">${l.nome||'–'}</td>
+      <td onmouseenter="startHoverContato(event,${l.id})" onmouseleave="cancelHoverContato(${l.id})" class="td-phone-hover">${phoneCell(l.telefone, l.id)}</td>
       <td class="ec">${origemEl(l.id, l.origem)}</td>
       <td class="ec">${statusEl(l.id, l.status)}</td>
       <td class="ec">${etapaEl(l.id, l.etapa)}</td>
@@ -4856,6 +5099,7 @@ function openIndicModal(id=null){
     title.textContent = 'Editar Indicação';
     saveBtn.innerHTML = `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Salvar Alterações`;
     document.getElementById('f-i-indicou').value = ind.indicou || '';
+    document.getElementById('f-i-telind').value = ind.telIndicou || '';
     document.getElementById('f-i-comprou').value = ind.comprou || '';
     document.getElementById('f-i-proj').value = ind.projeto || '';
     document.getElementById('f-i-uni').value = ind.unidade || '';
@@ -4866,7 +5110,7 @@ function openIndicModal(id=null){
   }else{
     title.textContent = 'Registrar Indicação';
     saveBtn.innerHTML = `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Salvar Indicação`;
-    ['f-i-indicou','f-i-comprou','f-i-proj','f-i-uni','f-i-data','f-i-valor'].forEach(fid=>{
+    ['f-i-indicou','f-i-telind','f-i-comprou','f-i-proj','f-i-uni','f-i-data','f-i-valor'].forEach(fid=>{
       const el = document.getElementById(fid);
       if(el) el.value = '';
     });
@@ -4876,6 +5120,7 @@ function openIndicModal(id=null){
 
 function saveIndic(){
   const indicou = document.getElementById('f-i-indicou').value.trim();
+  const telIndicou = document.getElementById('f-i-telind').value.trim();
   const comprou = document.getElementById('f-i-comprou').value.trim();
   const projeto = document.getElementById('f-i-proj').value.trim();
   const unidade = document.getElementById('f-i-uni').value.trim();
@@ -4894,6 +5139,7 @@ function saveIndic(){
     const ind = state.indicacoes.find(x=>x.id===editingIndicId);
     if(ind){
       ind.indicou = indicou;
+      ind.telIndicou = telIndicou;
       ind.comprou = comprou;
       ind.projeto = projeto;
       ind.unidade = unidade;
@@ -4910,7 +5156,7 @@ function saveIndic(){
   }else{
     const newIndic = {
       id: Date.now() + Math.floor(Math.random()*1000),
-      indicou, comprou, projeto, unidade, data,
+      indicou, telIndicou, comprou, projeto, unidade, data,
       tipo: indicTipoPremio,
       valor,
       pago: indicPagoState || 'nao'
@@ -4932,6 +5178,14 @@ function delIndic(id){
   renderIndicacoes();
   toast('Indicação removida');
   cloudDeleteIndic(id);
+}
+
+function indicPhoneCell(tel, id){
+  if(!tel) return `<span style="color:var(--muted)">–</span>`;
+  const safe = String(tel).replace(/"/g,'&quot;');
+  return `<span class="phone-cell">${tel}<button class="btn-copy" data-tel="${safe}" data-id="ind-${id}" onclick="copyPhone(this)" title="Copiar número">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+  </button></span>`;
 }
 
 function tipoBadge(tipo){
@@ -4996,6 +5250,7 @@ function renderIndicacoes(){
     <tr style="${isPago?'':'background:rgba(225,29,72,.025)'}">
       <td class="td-idx">${String(i+1).padStart(2,'0')}</td>
       <td class="td-name">${x.indicou}</td>
+      <td>${indicPhoneCell(x.telIndicou, x.id)}</td>
       <td style="font-weight:600;color:var(--text)">${x.comprou}</td>
       <td style="color:var(--text-2)">${x.projeto}</td>
       <td style="color:var(--text-2)">${x.unidade}</td>
@@ -5012,7 +5267,188 @@ function renderIndicacoes(){
         </button>
       </td>
     </tr>`;
-  }).join('') || `<tr><td colspan="10" style="text-align:center;padding:48px;color:var(--text-3)">Nenhuma indicação ${indicFilter==='pago'?'paga':indicFilter==='pendente'?'pendente':'registrada'}.</td></tr>`;
+  }).join('') || `<tr><td colspan="11" style="text-align:center;padding:48px;color:var(--text-3)">Nenhuma indicação ${indicFilter==='pago'?'paga':indicFilter==='pendente'?'pendente':'registrada'}.</td></tr>`;
+}
+
+/* ============================================================
+   HOVER POPOVERS — Notas & Último Contato
+   ============================================================ */
+let hoverNotaTimer = null;
+let hoverContatoTimer = null;
+let activePopoverLeadId = null;
+let notaSaveTimer = null;
+
+function startHoverNota(e, leadId){
+  const td = e.currentTarget;
+  td.classList.add('loading');
+  hoverNotaTimer = setTimeout(()=>{
+    td.classList.remove('loading');
+    openNotaPopover(leadId, td);
+  }, 3000);
+}
+
+function cancelHoverNota(leadId){
+  clearTimeout(hoverNotaTimer);
+  const els = document.querySelectorAll('.td-name-hover.loading');
+  els.forEach(el=>el.classList.remove('loading'));
+}
+
+function startHoverContato(e, leadId){
+  const td = e.currentTarget;
+  td.classList.add('loading');
+  hoverContatoTimer = setTimeout(()=>{
+    td.classList.remove('loading');
+    openContatoPopover(leadId, td);
+  }, 2000);
+}
+
+function cancelHoverContato(leadId){
+  clearTimeout(hoverContatoTimer);
+  const els = document.querySelectorAll('.td-phone-hover.loading');
+  els.forEach(el=>el.classList.remove('loading'));
+}
+
+function positionPopover(popId, anchor){
+  const pop = document.getElementById(popId);
+  const rect = anchor.getBoundingClientRect();
+  let top = rect.bottom + 8;
+  let left = rect.left;
+
+  // Se vai sair da tela por baixo, abre pra cima
+  if(top + 280 > window.innerHeight){
+    top = rect.top - 280;
+  }
+  // Se vai sair pela direita
+  if(left + 320 > window.innerWidth){
+    left = window.innerWidth - 340;
+  }
+  if(left < 10) left = 10;
+
+  pop.style.top = top + 'px';
+  pop.style.left = left + 'px';
+  pop.classList.add('show');
+}
+
+function closePopover(popId){
+  const pop = document.getElementById(popId);
+  if(pop) pop.classList.remove('show');
+  activePopoverLeadId = null;
+}
+
+// Fechar popover ao clicar fora
+document.addEventListener('click', (e)=>{
+  const p1 = document.getElementById('pop-notas');
+  const p2 = document.getElementById('pop-contato');
+  if(p1 && p1.classList.contains('show') && !p1.contains(e.target)){
+    closePopover('pop-notas');
+  }
+  if(p2 && p2.classList.contains('show') && !p2.contains(e.target)){
+    closePopover('pop-contato');
+  }
+});
+
+// ---- NOTAS ----
+function openNotaPopover(leadId, anchor){
+  closePopover('pop-contato'); // Fechar outro se estiver aberto
+  activePopoverLeadId = leadId;
+  const l = state.leads.find(x=>x.id===leadId);
+  if(!l) return;
+
+  document.getElementById('pop-notas-name').textContent = `Notas — ${l.nome}`;
+  document.getElementById('pop-notas-text').value = l.notas || '';
+  document.getElementById('pop-notas-saved').classList.remove('show');
+
+  positionPopover('pop-notas', anchor);
+  // Focus no textarea depois de animar
+  setTimeout(()=>document.getElementById('pop-notas-text').focus(), 250);
+}
+
+function autoSaveNota(){
+  clearTimeout(notaSaveTimer);
+  notaSaveTimer = setTimeout(()=>{
+    if(!activePopoverLeadId) return;
+    const l = state.leads.find(x=>x.id===activePopoverLeadId);
+    if(!l) return;
+    l.notas = document.getElementById('pop-notas-text').value;
+    saveState();
+    cloudUpdateLead(l);
+    // Mostrar indicador de salvo
+    const saved = document.getElementById('pop-notas-saved');
+    saved.classList.add('show');
+    setTimeout(()=>saved.classList.remove('show'), 2000);
+  }, 800); // Salva 800ms depois de parar de digitar
+}
+
+// ---- ÚLTIMO CONTATO ----
+function openContatoPopover(leadId, anchor){
+  closePopover('pop-notas'); // Fechar outro se estiver aberto
+  activePopoverLeadId = leadId;
+  const l = state.leads.find(x=>x.id===leadId);
+  if(!l) return;
+
+  document.getElementById('pop-contato-name').textContent = `Último Contato — ${l.nome}`;
+  document.getElementById('pop-contato-saved').classList.remove('show');
+
+  // Mostrar contato atual se existir
+  const currentDiv = document.getElementById('pop-contato-current');
+  if(l.ultimoContato){
+    const dias = diasDesde(l.ultimoContato);
+    const agoClass = dias > 14 ? 'danger' : dias > 7 ? 'warn' : '';
+    const agoText = dias === 0 ? 'Hoje' : dias === 1 ? 'Ontem' : `Há ${dias} dias`;
+    currentDiv.innerHTML = `
+      <div class="popover-contact-display">
+        <div>
+          <div class="popover-contact-label">Último contato</div>
+          <div class="popover-contact-date">${formatDate(l.ultimoContato)}</div>
+        </div>
+        <div class="popover-contact-ago ${agoClass}">${agoText}</div>
+      </div>
+    `;
+  }else{
+    currentDiv.innerHTML = `
+      <div class="popover-contact-display" style="justify-content:center;color:var(--text-3);font-size:12.5px;font-weight:500">
+        Nenhum contato registrado ainda
+      </div>
+    `;
+  }
+
+  // Setar data de hoje como default
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('pop-contato-date').value = today;
+
+  positionPopover('pop-contato', anchor);
+}
+
+function saveUltimoContato(){
+  if(!activePopoverLeadId) return;
+  const l = state.leads.find(x=>x.id===activePopoverLeadId);
+  if(!l) return;
+  const data = document.getElementById('pop-contato-date').value;
+  if(!data){toast('Selecione uma data', true); return;}
+
+  l.ultimoContato = data;
+  saveState();
+  cloudUpdateLead(l);
+
+  // Atualizar display
+  openContatoPopover(activePopoverLeadId, document.querySelector('.popover.show') || document.body);
+
+  // Mostrar feedback
+  const saved = document.getElementById('pop-contato-saved');
+  saved.classList.add('show');
+  setTimeout(()=>saved.classList.remove('show'), 2500);
+  toast(`Contato registrado: ${formatDate(data)}`);
+}
+
+function diasDesde(dateStr){
+  if(!dateStr) return 999;
+  try{
+    const d = new Date(dateStr + 'T00:00:00');
+    const now = new Date();
+    now.setHours(0,0,0,0);
+    const diff = Math.floor((now - d) / (1000*60*60*24));
+    return Math.max(0, diff);
+  }catch(e){return 999;}
 }
 
 /* ============================================================
