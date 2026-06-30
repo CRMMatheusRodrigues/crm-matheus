@@ -3552,9 +3552,18 @@ function getSbHeaders(){
 
 async function sbGet(table) {
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*&order=id.desc`, {headers: getSbHeaders()});
-    if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-    return await r.json();
+    const PAGE = 1000;
+    let from = 0, all = [], done = false;
+    while (!done) {
+      const headers = {...getSbHeaders(), 'Range-Unit': 'items', 'Range': `${from}-${from + PAGE - 1}`};
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*&order=id.desc`, {headers});
+      if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+      const chunk = await r.json();
+      all = all.concat(chunk);
+      done = chunk.length < PAGE;
+      from += PAGE;
+    }
+    return all;
   } catch(e) { console.warn('Supabase GET falhou:', table, e); return null; }
 }
 
