@@ -1620,6 +1620,25 @@ td{
 .txt{resize:vertical;min-height:80px}
 .sel{cursor:pointer}
 .fld-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* Searchable lead dropdown */
+.lead-search-wrap{position:relative}
+.lead-search-wrap .lead-search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-3);pointer-events:none;display:flex;align-items:center}
+.lead-search-wrap .inp{padding-left:38px}
+.lead-search-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--primary);border-radius:10px;max-height:220px;overflow-y:auto;z-index:9999;display:none;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.lead-search-dropdown.open{display:block}
+.lead-search-option{padding:10px 14px;font-size:13.5px;font-weight:500;color:var(--text);cursor:pointer;transition:background .12s}
+.lead-search-option:hover,.lead-search-option.active{background:var(--surface-3)}
+.lead-search-option.no-result{color:var(--text-3);cursor:default;font-style:italic}
+.lead-search-selected{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface);border:1px solid var(--primary);border-radius:10px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;transition:all .18s}
+.lead-search-selected:hover{border-color:var(--primary);box-shadow:0 0 0 4px rgba(79,70,229,.1)}
+.lead-search-clear{margin-left:auto;background:none;border:none;color:var(--text-3);cursor:pointer;font-size:16px;line-height:1;padding:0 2px}
+.lead-search-clear:hover{color:var(--rose)}
+
+/* Botao editar nome do lead */
+.btn-edit-nome{background:none;border:none;cursor:pointer;color:var(--text-3);padding:2px 5px;border-radius:6px;transition:color .15s,background .15s;display:inline-flex;align-items:center;vertical-align:middle;margin-left:6px}
+.btn-edit-nome:hover{color:var(--primary);background:var(--surface-3)}
+.inp-edit-nome{background:var(--surface);border:1px solid var(--primary);border-radius:8px;color:var(--text);font-size:inherit;font-family:inherit;font-weight:700;padding:4px 10px;outline:none;width:100%;box-shadow:0 0 0 3px rgba(79,70,229,.12)}
 .fld-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 
 /* Toggle SIM / NÃO */
@@ -3395,7 +3414,13 @@ document.addEventListener('keydown', dismissWelcome, {once:true});
     <div class="mod-b">
       <div class="fld">
         <label class="fld-lbl">Selecionar Lead <span>*</span></label>
-        <select class="sel" id="f-cx-lead"><option value="">— Selecionar Lead —</option></select>
+        <div class="lead-search-wrap" id="cx-lead-wrap">
+          <span class="lead-search-icon"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input class="inp" id="f-cx-lead-search" type="text" placeholder="Buscar cliente pelo nome..." autocomplete="off"
+            oninput="filterLeadSearch()" onfocus="openLeadSearch()" onblur="blurLeadSearch()" />
+          <div class="lead-search-dropdown" id="cx-lead-dropdown"></div>
+        </div>
+        <input type="hidden" id="f-cx-lead" value="">
       </div>
       <div class="fld">
         <label class="fld-lbl">Projeto de Interesse <span>*</span></label>
@@ -4604,7 +4629,14 @@ function renderTbl(){
   document.getElementById('tb').innerHTML = p.map((l,i) => `
     <tr>
       <td class="td-idx">${String(s+i+1).padStart(2,'0')}</td>
-      <td class="td-name td-name-hover" onclick="showLeadDetail(${l.id})" style="cursor:pointer" title="Clique pra ver detalhes" onmouseenter="startHoverNota(event,${l.id})" onmouseleave="cancelHoverNota()">${l.nome||'–'}</td>
+      <td class="td-name td-name-hover" onmouseenter="startHoverNota(event,${l.id})" onmouseleave="cancelHoverNota()">
+        <div style="display:flex;align-items:center;gap:2px" id="lead-nome-container-${l.id}">
+          <span style="cursor:pointer" onclick="showLeadDetail(${l.id})" title="Clique pra ver detalhes">${l.nome||'–'}</span>
+          <button class="btn-edit-nome" onclick="editLeadNome(${l.id})" title="Editar nome">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+        </div>
+      </td>
       <td onmouseenter="startHoverContato(event,${l.id})" onmouseleave="cancelHoverContato()" class="td-phone-hover">${phoneCell(l.telefone, l.id)}</td>
       <td class="ec">${origemEl(l.id, l.origem)}</td>
       <td class="ec">${statusEl(l.id, l.status)}</td>
@@ -5302,7 +5334,14 @@ function showLeadDetail(leadId){
     <div class="lead-detail-grid">
       <div class="lead-detail-item" style="grid-column:span 2">
         <div class="lead-detail-lbl">Nome Completo</div>
-        <div class="lead-detail-val big">${l.nome || '–'}</div>
+        <div class="lead-detail-val big" style="display:flex;align-items:center;gap:6px">
+          <span id="lead-nome-container-${l.id}" style="display:flex;align-items:center;gap:4px">
+            <span>${l.nome||'–'}</span>
+            <button class="btn-edit-nome" onclick="editLeadNome(${l.id})" title="Editar nome">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+          </span>
+        </div>
       </div>
       <div class="lead-detail-item" style="grid-column:span 2">
         <div class="lead-detail-lbl">WhatsApp</div>
@@ -6421,6 +6460,110 @@ function setCxCredito(v){
   document.getElementById('cx-justificativa-wrap').style.display = v ? 'block' : 'none';
 }
 
+// ─── SEARCHABLE LEAD DROPDOWN ───────────────────────────────────────
+let cxLeadSearchOpen = false;
+
+function openLeadSearch(){
+  filterLeadSearch();
+  document.getElementById('cx-lead-dropdown').classList.add('open');
+  cxLeadSearchOpen = true;
+}
+
+function blurLeadSearch(){
+  // delay pra permitir click na option antes de fechar
+  setTimeout(()=>{
+    document.getElementById('cx-lead-dropdown').classList.remove('open');
+    cxLeadSearchOpen = false;
+    // se não selecionou nada, limpa o campo visual mas mantém o hidden vazio
+    const hiddenVal = document.getElementById('f-cx-lead').value;
+    if(!hiddenVal) document.getElementById('f-cx-lead-search').value = '';
+  }, 180);
+}
+
+function filterLeadSearch(){
+  const q = (document.getElementById('f-cx-lead-search').value||'').toLowerCase().trim();
+  const dropdown = document.getElementById('cx-lead-dropdown');
+  const filtered = q
+    ? state.leads.filter(l=>(l.nome||'').toLowerCase().includes(q))
+    : state.leads;
+  if(!filtered.length){
+    dropdown.innerHTML = '<div class="lead-search-option no-result">Nenhum cliente encontrado</div>';
+  } else {
+    dropdown.innerHTML = filtered.slice(0,80).map(l=>
+      `<div class="lead-search-option" onmousedown="selectLeadOption(${l.id},'${(l.nome||'').replace(/'/g,"\'")}')">
+        ${l.nome||'–'}
+       </div>`
+    ).join('');
+  }
+  dropdown.classList.add('open');
+}
+
+function selectLeadOption(id, nome){
+  document.getElementById('f-cx-lead').value = id;
+  document.getElementById('f-cx-lead-search').value = nome;
+  document.getElementById('cx-lead-dropdown').classList.remove('open');
+}
+
+// ─── EDITAR NOME DO LEAD ────────────────────────────────────────────
+function editLeadNome(leadId){
+  const lead = state.leads.find(l=>l.id===leadId);
+  if(!lead) return;
+  const container = document.getElementById('lead-nome-container-'+leadId);
+  if(!container) return;
+  const nomeAtual = lead.nome||'';
+  container.innerHTML = `
+    <input class="inp-edit-nome" id="inp-nome-${leadId}" type="text" value="${nomeAtual.replace(/"/g,'&quot;')}"
+      onkeydown="if(event.key==='Enter')saveLeadNome(${leadId});if(event.key==='Escape')cancelEditNome(${leadId},this.dataset.orig)"
+      data-orig="${nomeAtual.replace(/"/g,'&quot;')}" />
+    <button class="btn-edit-nome" onclick="saveLeadNome(${leadId})" title="Salvar" style="color:var(--green)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </button>
+    <button class="btn-edit-nome" onclick="cancelEditNome(${leadId},'${nomeAtual.replace(/'/g,"\'")}')" title="Cancelar" style="color:var(--rose)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>`;
+  document.getElementById('inp-nome-'+leadId).focus();
+}
+
+function cancelEditNome(leadId, nomeOrig){
+  renderNomeContainer(leadId, nomeOrig);
+}
+
+async function saveLeadNome(leadId){
+  const inp = document.getElementById('inp-nome-'+leadId);
+  if(!inp) return;
+  const novoNome = inp.value.trim();
+  if(!novoNome){toast('Nome não pode ser vazio',true);return;}
+  const lead = state.leads.find(l=>l.id===leadId);
+  if(!lead) return;
+  const nomeAnterior = lead.nome;
+  lead.nome = novoNome;
+  saveState();
+  renderNomeContainer(leadId, novoNome);
+  // atualiza header do modal de detalhe se estiver aberto
+  const modTitle = document.getElementById('mod-ld-t');
+  if(modTitle && modTitle.textContent === nomeAnterior) modTitle.textContent = novoNome;
+  // sync nuvem
+  const ok = await cloudUpdateLead(lead);
+  if(ok){
+    toast('Nome atualizado: '+novoNome);
+  } else {
+    lead.nome = nomeAnterior;
+    saveState();
+    renderNomeContainer(leadId, nomeAnterior);
+    toast('Erro ao salvar — verifique a conexão',true);
+  }
+}
+
+function renderNomeContainer(leadId, nome){
+  const container = document.getElementById('lead-nome-container-'+leadId);
+  if(!container) return;
+  container.innerHTML = `
+    <span>${nome||'–'}</span>
+    <button class="btn-edit-nome" onclick="editLeadNome(${leadId})" title="Editar nome">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>`;
+}
+
 function openCaixaModal(id){
   editingCaixaId = id || null;
   cxRendaTipo='';cxMista='';cxCredito='';cxCheque='';cxDep='';cxPro='';
@@ -6429,14 +6572,19 @@ function openCaixaModal(id){
   document.getElementById('cx-justificativa-wrap').style.display='none';
   document.getElementById('cx-cheque-valor-wrap').style.display='none';
 
-  const sel = document.getElementById('f-cx-lead');
-  sel.innerHTML = '<option value="">— Selecionar Lead —</option>' + state.leads.map(l=>`<option value="${l.id}">${l.nome}</option>`).join('');
+  // reset searchable lead field
+  document.getElementById('f-cx-lead').value = '';
+  document.getElementById('f-cx-lead-search').value = '';
+  document.getElementById('cx-lead-dropdown').classList.remove('open');
 
   if(id){
     const cx = state.cadastrosCaixa.find(x=>x.id===id);
     if(!cx) return;
     document.getElementById('mod-caixa-t').textContent = 'Editar Análise';
-    sel.value = cx.leadId || '';
+    // preenche o searchable field com o lead vinculado
+    const linkedLead = state.leads.find(l=>l.id === (cx.leadId||0));
+    document.getElementById('f-cx-lead').value = cx.leadId || '';
+    document.getElementById('f-cx-lead-search').value = linkedLead ? linkedLead.nome : (cx.leadNome||'');
     document.getElementById('f-cx-proj').value = cx.projeto||'';
     document.getElementById('f-cx-data').value = cx.data||'';
     document.getElementById('f-cx-fin').value = cx.financiamento||'';
