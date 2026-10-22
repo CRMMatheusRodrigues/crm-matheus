@@ -1641,6 +1641,55 @@ td{
 .inp-edit-nome{background:var(--surface);border:1px solid var(--primary);border-radius:8px;color:var(--text);font-size:inherit;font-family:inherit;font-weight:700;padding:4px 10px;outline:none;width:100%;box-shadow:0 0 0 3px rgba(79,70,229,.12)}
 .fld-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 
+/* ===== AGENDA ===== */
+.ag-grid{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start;margin-top:22px}
+@media(max-width:1000px){.ag-grid{grid-template-columns:1fr}}
+.ag-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.ag-cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;font-family:'Space Grotesk',sans-serif;font-weight:600;text-transform:capitalize;color:var(--text)}
+.ag-nav{background:var(--surface-3);border:1px solid var(--border);color:var(--text-2);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;line-height:1}
+.ag-nav:hover{color:var(--primary);border-color:var(--primary)}
+.ag-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.ag-dow{text-align:center;font-size:11px;font-weight:600;color:var(--text-3);padding:4px 0}
+.ag-cell{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:9px;font-size:13px;color:var(--text-2);cursor:pointer;transition:background .15s}
+.ag-cell:hover{background:var(--surface-3)}
+.ag-cell.ag-off{cursor:default;pointer-events:none}
+.ag-cell.ag-today{border:1px solid var(--primary);color:var(--primary);font-weight:700}
+.ag-cell.ag-sel{background:var(--primary);color:#0c0c0f;font-weight:700}
+.ag-cell i{position:absolute;top:2px;right:3px;font-style:normal;font-size:9px;font-weight:700;background:var(--green);color:#0c0c0f;border-radius:8px;padding:0 4px;line-height:14px}
+.ag-today-btn{width:100%;margin-top:14px;padding:9px;border-radius:9px;border:1px solid var(--border);background:var(--surface-3);color:var(--text-2);font:600 12.5px Inter,sans-serif;cursor:pointer}
+.ag-today-btn:hover{color:var(--primary);border-color:var(--primary)}
+.ag-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.ag-tab{padding:8px 16px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--text-2);font:600 12.5px Inter,sans-serif;cursor:pointer}
+.ag-tab.on{background:var(--primary);border-color:var(--primary);color:#0c0c0f}
+.ag-day{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);margin:18px 0 8px}
+.ag-day:first-child{margin-top:0}
+.ag-item{display:flex;gap:16px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:12px;margin-bottom:10px}
+.ag-item.ag-s-confirmado{border-left-color:var(--green)}
+.ag-item.ag-s-realizado{border-left-color:var(--primary)}
+.ag-item.ag-s-cancelado,.ag-item.ag-s-nao{border-left-color:var(--rose);opacity:.6}
+.ag-time{min-width:62px;font-family:'Space Grotesk',sans-serif}
+.ag-time b{display:block;font-size:17px;color:var(--text)}
+.ag-time span{font-size:11px;color:var(--text-3)}
+.ag-main{flex:1;min-width:0}
+.ag-t{font-weight:700;font-size:14px;color:var(--text);margin-bottom:3px}
+.ag-tipo{font-size:11px;font-weight:600;color:var(--text-3);margin-left:8px}
+.ag-line{font-size:12.5px;color:var(--text-2);margin-top:2px;word-break:break-word}
+.ag-line a{color:var(--primary);text-decoration:none;margin-left:8px}
+.ag-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.ag-badge{cursor:pointer;user-select:none;background:var(--surface-3);color:var(--text-2)}
+.ag-b-agendado{background:rgba(96,165,250,.14);color:var(--blue)}
+.ag-b-confirmado{background:rgba(52,211,153,.14);color:var(--green)}
+.ag-b-realizado{background:rgba(212,175,55,.14);color:var(--primary)}
+.ag-b-cancelado,.ag-b-nao{background:rgba(255,77,106,.14);color:var(--rose)}
+.ag-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.ag-btn{padding:5px 10px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text-2);font:600 11.5px Inter,sans-serif;cursor:pointer}
+.ag-btn:hover{color:var(--primary);border-color:var(--primary)}
+.ag-btn.ag-del:hover{color:var(--rose);border-color:var(--rose)}
+.ag-empty{text-align:center;color:var(--text-3);font-size:13.5px;padding:36px 10px}
+.ag-selbar{display:flex;align-items:center;justify-content:space-between;background:var(--surface-3);border-radius:10px;padding:9px 14px;font-size:12.5px;color:var(--text-2);margin-bottom:14px}
+.ag-selbar button{background:none;border:none;color:var(--primary);font:600 12.5px Inter,sans-serif;cursor:pointer}
+@media(max-width:640px){.ag-item{flex-wrap:wrap}.ag-side{align-items:flex-start;width:100%}.ag-btns{justify-content:flex-start}}
+
 /* Toggle SIM / NÃO */
 .toggle-group{
   display:flex;
@@ -2379,6 +2428,11 @@ document.addEventListener('keydown', dismissWelcome, {once:true});
       Cadastro Caixa
       <span class="ni-count sb-num" id="sc-cx">0</span>
     </div>
+    <div class="ni" id="ni-agenda" onclick="nav('agenda',this)">
+      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Agenda
+      <span class="ni-count sb-num" id="sc-ag">0</span>
+    </div>
     <div class="sb-section" style="margin-top:10px">Análise</div>
     <div class="ni" id="ni-orig" onclick="nav('orig',this)">
       <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -2924,6 +2978,41 @@ document.addEventListener('keydown', dismissWelcome, {once:true});
     </div>
 
     <!-- ===== ORIGENS ===== -->
+    <div class="sec" id="sec-agenda">
+      <div class="pad">
+        <div class="funnel-hero">
+          <div class="funnel-hero-text">
+            <h3>Agenda</h3>
+            <p>Visitas, reuniões e assinaturas com seus clientes. Lembretes no CRM e envio para o Google Agenda, com notificação no Gmail e no celular.</p>
+          </div>
+          <button class="btn-add" onclick="agOpen()">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Novo Compromisso
+          </button>
+        </div>
+        <div class="kpi-g kpi-g-3">
+          <div class="kpi" style="--kc:var(--primary);--kc-bg:rgba(212,175,55,.1)"><div class="kpi-glow"></div><div class="kpi-head"><div class="kpi-icon"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div></div><div class="kpi-val" id="kv-ag1">0</div><div class="kpi-lbl">Compromissos hoje</div></div>
+          <div class="kpi" style="--kc:var(--blue);--kc-bg:rgba(96,165,250,.1)"><div class="kpi-glow"></div><div class="kpi-head"><div class="kpi-icon"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div><div class="kpi-val" id="kv-ag2">0</div><div class="kpi-lbl">Próximos 7 dias</div></div>
+          <div class="kpi" style="--kc:var(--green);--kc-bg:rgba(52,211,153,.1)"><div class="kpi-glow"></div><div class="kpi-head"><div class="kpi-icon"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div></div><div class="kpi-val" id="kv-ag3">0</div><div class="kpi-lbl">A confirmar</div></div>
+        </div>
+        <div class="ag-grid">
+          <div class="ag-card">
+            <div class="ag-cal-h"><button class="ag-nav" onclick="agMonth(-1)">&#8249;</button><div id="ag-cal-t"></div><button class="ag-nav" onclick="agMonth(1)">&#8250;</button></div>
+            <div class="ag-cal" id="ag-cal"></div>
+            <button class="ag-today-btn" onclick="agToday()">Ir para hoje</button>
+          </div>
+          <div class="ag-card">
+            <div class="ag-tabs">
+              <button class="ag-tab on" id="agt-proximos" onclick="agTab('proximos')">Próximos</button>
+              <button class="ag-tab" id="agt-hoje" onclick="agTab('hoje')">Hoje</button>
+              <button class="ag-tab" id="agt-passados" onclick="agTab('passados')">Histórico</button>
+            </div>
+            <div id="ag-sel-bar"></div>
+            <div id="ag-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="sec" id="sec-orig">
       <div class="pad">
         <div class="funnel-hero">
@@ -3404,6 +3493,47 @@ document.addEventListener('keydown', dismissWelcome, {once:true});
   </div>
 </div>
 
+<!-- MODAL AGENDA -->
+<div class="mod-ov" id="mod-ag">
+  <div class="mod">
+    <div class="mod-h">
+      <div class="mod-t" id="mod-ag-t">Novo compromisso</div>
+      <button class="mod-x" onclick="closeModal('mod-ag')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mod-b">
+      <div class="fld-row">
+        <div class="fld"><label class="fld-lbl">Tipo</label><select class="sel" id="ag-tipo"><option value="Visita ao plantão">Visita ao plantão</option><option value="Visita ao decorado">Visita ao decorado</option><option value="Reunião">Reunião</option><option value="Assinatura de contrato">Assinatura de contrato</option><option value="Análise de crédito">Análise de crédito</option><option value="Ligação / Vídeo">Ligação / Vídeo</option><option value="Outro">Outro</option></select></div>
+        <div class="fld"><label class="fld-lbl">Assunto / Empreendimento</label><input class="inp" id="ag-assunto" placeholder="Opcional"></div>
+      </div>
+      <div class="fld">
+        <label class="fld-lbl">Cliente <span>*</span></label>
+        <input class="inp" id="ag-cliente" list="ag-leads-dl" autocomplete="off" oninput="agLeadInput()" placeholder="Digite para buscar entre seus leads">
+        <datalist id="ag-leads-dl"></datalist>
+        <input type="hidden" id="ag-leadid" value="">
+      </div>
+      <div class="fld"><label class="fld-lbl">Telefone</label><input class="inp" id="ag-tel" placeholder="(11) 99999-9999"></div>
+      <div class="fld-row-3">
+        <div class="fld"><label class="fld-lbl">Data <span>*</span></label><input class="inp" type="date" id="ag-data"></div>
+        <div class="fld"><label class="fld-lbl">Horário <span>*</span></label><input class="inp" type="time" id="ag-hora"></div>
+        <div class="fld"><label class="fld-lbl">Duração (min)</label><input class="inp" type="number" id="ag-dur" min="15" step="15"></div>
+      </div>
+      <div class="fld"><label class="fld-lbl">Local</label><input class="inp" id="ag-local" placeholder="Endereço ou nome do plantão / decorado"></div>
+      <div class="fld-row">
+        <div class="fld"><label class="fld-lbl">Status</label><select class="sel" id="ag-status"><option value="Agendado">Agendado</option><option value="Confirmado">Confirmado</option><option value="Realizado">Realizado</option><option value="Cancelado">Cancelado</option><option value="Não compareceu">Não compareceu</option></select></div>
+        <div class="fld"><label class="fld-lbl">Lembrete no CRM</label><select class="sel" id="ag-lemb"><option value="0">Sem lembrete</option><option value="15">15 minutos antes</option><option value="30">30 minutos antes</option><option value="60">1 hora antes</option><option value="120">2 horas antes</option><option value="1440">1 dia antes</option></select></div>
+      </div>
+      <div class="fld"><label class="fld-lbl">Observações</label><textarea class="txt" id="ag-obs"></textarea></div>
+    </div>
+    <div class="mod-f">
+      <button class="btn-sec" onclick="closeModal('mod-ag')">Cancelar</button>
+      <button class="btn-p" id="ag-save" onclick="agSave()" style="padding:11px 26px;font-size:13.5px">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Salvar Compromisso
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL CADASTRO CAIXA -->
 <div class="mod-ov" id="mod-caixa">
   <div class="mod">
@@ -3688,13 +3818,14 @@ async function pullFromCloud() {
   syncInProgress = true;
   try {
     const oldLeadIds = state.leads.map(l => l.id);
-    const [leadsR, vendasR, indicR, cadR, caixaR] = await Promise.all([
-      sbGet('leads'), sbGet('vendas'), sbGet('indicacoes'), sbGet('cadastros'), sbGet('cadastros_caixa')
+    const [leadsR, vendasR, indicR, cadR, caixaR, agR] = await Promise.all([
+      sbGet('leads'), sbGet('vendas'), sbGet('indicacoes'), sbGet('cadastros'), sbGet('cadastros_caixa'), sbGet('agenda')
     ]);
     if (leadsR) state.leads = leadsR.map(mapLeadFromDB);
     if (vendasR) state.vendas = vendasR.map(mapVendaFromDB);
     if (indicR) state.indicacoes = indicR.map(mapIndicFromDB);
     if (caixaR) state.cadastrosCaixa = caixaR.map(mapCaixaFromDB);
+    if (agR) state.agenda = agR.map(mapAgendaFromDB);
     if (cadR) {
       const etapas = cadR.filter(c=>c.tipo==='etapa').map(c=>({l:c.nome, dbId:c.id}));
       const statuses = cadR.filter(c=>c.tipo==='status').map(c=>({l:c.nome, cls:c.cls||'', dbId:c.id}));
@@ -3767,9 +3898,9 @@ function startLeadPolling(){
   if(pollTimer) clearInterval(pollTimer);
   pollTimer = setInterval(async ()=>{
     if(!cloudAvailable || syncInProgress) return;
-    const oldHash = state.leads.length + '-' + state.vendas.length + '-' + state.indicacoes.length + '-' + (state.cadastrosCaixa||[]).length;
+    const oldHash = state.leads.length + '-' + state.vendas.length + '-' + state.indicacoes.length + '-' + (state.cadastrosCaixa||[]).length + '-' + (state.agenda||[]).length;
     await pullFromCloud();
-    const newHash = state.leads.length + '-' + state.vendas.length + '-' + state.indicacoes.length + '-' + (state.cadastrosCaixa||[]).length;
+    const newHash = state.leads.length + '-' + state.vendas.length + '-' + state.indicacoes.length + '-' + (state.cadastrosCaixa||[]).length + '-' + (state.agenda||[]).length;
     if(oldHash !== newHash){
       boot();
     }
@@ -3929,6 +4060,7 @@ let state = {
   vendas: [],
   indicacoes: [],
   cadastrosCaixa: [],
+  agenda: [],
   etapas: [
     {l:'Vídeo chamada agendada'},
     {l:'Grupo criado'},
@@ -4282,6 +4414,7 @@ function boot(){
   renderVendas();
   renderIndicacoes();
   renderCaixa();
+  renderAgenda();
   if(state.leads.length === 0){
     document.getElementById('emptyEl').style.display = 'block';
     document.getElementById('app').style.display = 'none';
@@ -5042,6 +5175,7 @@ const TITLES = {
   vendas:{t:'Vendas Realizadas', s:'Histórico de contratos fechados'},
   indic:{t:'Pagamento de Indicações', s:'Premiações para quem indica clientes'},
   caixa:{t:'Cadastro Caixa', s:'Análises de crédito e financiamento'},
+  agenda:{t:'Agenda', s:'Compromissos e visitas com clientes'},
   orig:{t:'Origens & Regiões', s:'Análise de captação'}
 };
 function nav(name, el){
@@ -5049,7 +5183,7 @@ function nav(name, el){
   el.classList.add('on');
 
   // Show app wrapper for vendas/indic even if no leads
-  if(name === 'vendas' || name === 'indic' || name === 'caixa'){
+  if(name === 'vendas' || name === 'indic' || name === 'caixa' || name === 'agenda'){
     document.getElementById('emptyEl').style.display = 'none';
     document.getElementById('app').style.display = 'block';
   }else if(state.leads.length === 0){
@@ -5064,6 +5198,7 @@ function nav(name, el){
   document.getElementById('sec-'+name).classList.add('on');
   document.getElementById('ph').textContent = TITLES[name].t;
   document.getElementById('ph-sub').textContent = TITLES[name].s;
+  if(name === 'agenda') renderAgenda();
   if(name === 'orig' && state.leads.length){
     setTimeout(() => {
       mkDonut('cO2', cmap('origem'), (_,i) => PAL[i%PAL.length], 'origem');
@@ -6460,6 +6595,250 @@ function setCxCredito(v){
   document.getElementById('cx-justificativa-wrap').style.display = v ? 'block' : 'none';
 }
 
+/* ============================================================
+   AGENDA
+   ============================================================ */
+let agEditId = null, agFiltro = 'proximos', agSel = null, agTimer = null;
+let agMes = (()=>{ const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), 1); })();
+
+function agEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function agPad(n){ return String(n).padStart(2,'0'); }
+function agDia(d){ return d.getFullYear()+'-'+agPad(d.getMonth()+1)+'-'+agPad(d.getDate()); }
+function agHora(d){ return agPad(d.getHours())+':'+agPad(d.getMinutes()); }
+function agAtivo(a){ return a.status==='Agendado' || a.status==='Confirmado'; }
+function agKey(st){ return ({'Agendado':'agendado','Confirmado':'confirmado','Realizado':'realizado','Cancelado':'cancelado','Não compareceu':'nao'})[st] || 'agendado'; }
+
+function mapAgendaFromDB(r){
+  return {id:r.id, titulo:r.titulo||'', tipo:r.tipo||'Visita', leadId:r.lead_id||0, cliente:r.cliente||'', telefone:r.telefone||'', local:r.local||'', inicio:r.inicio, fim:r.fim||'', status:r.status||'Agendado', lembreteMin:(r.lembrete_min==null?60:r.lembrete_min), observacoes:r.observacoes||''};
+}
+function mapAgendaToDB(a){
+  return {titulo:a.titulo, tipo:a.tipo, lead_id:a.leadId||null, cliente:a.cliente, telefone:a.telefone||null, local:a.local||null, inicio:a.inicio, fim:a.fim||null, status:a.status, lembrete_min:a.lembreteMin, observacoes:a.observacoes||null};
+}
+
+function agDayLabel(k){
+  const hoje = agDia(new Date()), amanha = agDia(new Date(Date.now()+864e5));
+  const p = k.split('-').map(Number);
+  const base = new Date(p[0], p[1]-1, p[2]).toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'2-digit'});
+  return k===hoje ? 'Hoje · '+base : (k===amanha ? 'Amanhã · '+base : base);
+}
+
+function agItem(a){
+  const ini = new Date(a.inicio), fim = a.fim ? new Date(a.fim) : null, key = agKey(a.status);
+  const maps = a.local ? '<a href="https://www.google.com/maps/search/?api=1&amp;query='+encodeURIComponent(a.local)+'" target="_blank" rel="noopener">Ver no mapa</a>' : '';
+  return '<div class="ag-item ag-s-'+key+'">'
+    + '<div class="ag-time"><b>'+agHora(ini)+'</b>'+(fim?'<span>até '+agHora(fim)+'</span>':'')+'</div>'
+    + '<div class="ag-main">'
+    +   '<div class="ag-t">'+agEsc(a.titulo)+'<span class="ag-tipo">'+agEsc(a.tipo)+'</span></div>'
+    +   '<div class="ag-line">'+agEsc(a.cliente)+(a.telefone?' · '+agEsc(a.telefone):'')+'</div>'
+    +   (a.local?'<div class="ag-line">'+agEsc(a.local)+maps+'</div>':'')
+    +   (a.observacoes?'<div class="ag-line" style="opacity:.8">'+agEsc(a.observacoes)+'</div>':'')
+    + '</div>'
+    + '<div class="ag-side">'
+    +   '<span class="badge ag-badge ag-b-'+key+'" onclick="agCycle('+a.id+')" title="Clique para avançar o status">'+agEsc(a.status)+'</span>'
+    +   '<div class="ag-btns">'
+    +     '<button class="ag-btn" onclick="agGoogle('+a.id+')" title="Adicionar ao Google Agenda: lembrete no Gmail e no celular">Google Agenda</button>'
+    +     '<button class="ag-btn" onclick="agIcs('+a.id+')" title="Baixar arquivo .ics (Apple, Outlook, Google)">.ics</button>'
+    +     '<button class="ag-btn" onclick="agOpen('+a.id+')">Editar</button>'
+    +     '<button class="ag-btn ag-del" onclick="agDel('+a.id+')">Excluir</button>'
+    +   '</div>'
+    + '</div></div>';
+}
+
+function agRenderCal(all){
+  const y = agMes.getFullYear(), m = agMes.getMonth();
+  document.getElementById('ag-cal-t').textContent = agMes.toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
+  const start = new Date(y, m, 1).getDay(), dias = new Date(y, m+1, 0).getDate(), hoje = agDia(new Date());
+  const cnt = {};
+  all.filter(agAtivo).forEach(a=>{ const k = agDia(new Date(a.inicio)); cnt[k] = (cnt[k]||0)+1; });
+  let h = ['D','S','T','Q','Q','S','S'].map(d=>'<div class="ag-dow">'+d+'</div>').join('');
+  for(let i=0;i<start;i++) h += '<div class="ag-cell ag-off"></div>';
+  for(let d=1; d<=dias; d++){
+    const k = y+'-'+agPad(m+1)+'-'+agPad(d);
+    h += '<div class="ag-cell'+(k===hoje?' ag-today':'')+(k===agSel?' ag-sel':'')+'" onclick="agPick(\''+k+'\')">'+d+(cnt[k]?'<i>'+cnt[k]+'</i>':'')+'</div>';
+  }
+  document.getElementById('ag-cal').innerHTML = h;
+}
+
+function agSidebar(n){
+  const el = document.getElementById('sc-ag');
+  if(!el) return;
+  if(typeof sidebarNumsHidden !== 'undefined' && sidebarNumsHidden){ el.setAttribute('data-val', n); el.textContent = '•'; }
+  else el.textContent = n;
+}
+
+function renderAgenda(){
+  if(!state.agenda) state.agenda = [];
+  if(!document.getElementById('ag-list')) return;
+  const now = new Date(), hoje = agDia(now);
+  const all = state.agenda.slice().sort((a,b)=>new Date(a.inicio)-new Date(b.inicio));
+  const ativos = all.filter(agAtivo);
+  const lim = new Date(now.getTime()+7*864e5);
+  const nHoje = ativos.filter(a=>agDia(new Date(a.inicio))===hoje).length;
+  const n7 = ativos.filter(a=>{ const d = new Date(a.inicio); return d>=now && d<=lim; }).length;
+  const nConf = ativos.filter(a=>a.status==='Agendado' && new Date(a.inicio)>=now).length;
+  setKpi('kv-ag1', nHoje); setKpi('kv-ag2', n7); setKpi('kv-ag3', nConf);
+  agSidebar(nHoje);
+  agRenderCal(all);
+
+  const proximo = a => agAtivo(a) && new Date(a.fim||a.inicio) >= now;
+  let lista, rotulo = '';
+  if(agSel){ lista = all.filter(a=>agDia(new Date(a.inicio))===agSel); rotulo = 'Dia '+agSel.split('-').reverse().join('/'); }
+  else if(agFiltro==='hoje'){ lista = all.filter(a=>agDia(new Date(a.inicio))===hoje); }
+  else if(agFiltro==='passados'){ lista = all.filter(a=>!proximo(a)).reverse().slice(0,60); }
+  else { lista = all.filter(proximo); }
+
+  ['proximos','hoje','passados'].forEach(t=>{ const b = document.getElementById('agt-'+t); if(b) b.classList.toggle('on', !agSel && agFiltro===t); });
+  document.getElementById('ag-sel-bar').innerHTML = agSel ? '<div class="ag-selbar"><span>Mostrando '+rotulo+'</span><button onclick="agPick(\''+agSel+'\')">Limpar filtro</button></div>' : '';
+
+  let html = '', ultimo = '';
+  lista.forEach(a=>{
+    const k = agDia(new Date(a.inicio));
+    if(k!==ultimo){ html += '<div class="ag-day">'+agEsc(agDayLabel(k))+'</div>'; ultimo = k; }
+    html += agItem(a);
+  });
+  document.getElementById('ag-list').innerHTML = html || '<div class="ag-empty">Nenhum compromisso por aqui. Clique em "Novo Compromisso" para agendar.</div>';
+}
+
+function agTab(f){ agFiltro = f; agSel = null; renderAgenda(); }
+function agPick(k){ agSel = (agSel===k) ? null : k; renderAgenda(); }
+function agMonth(delta){ agMes = new Date(agMes.getFullYear(), agMes.getMonth()+delta, 1); renderAgenda(); }
+function agToday(){ const d = new Date(); agMes = new Date(d.getFullYear(), d.getMonth(), 1); agSel = null; agFiltro = 'proximos'; renderAgenda(); }
+
+function agLeadInput(){
+  const nome = document.getElementById('ag-cliente').value.trim().toLowerCase();
+  const l = state.leads.find(x=>(x.nome||'').trim().toLowerCase()===nome);
+  document.getElementById('ag-leadid').value = l ? l.id : '';
+  if(l && !document.getElementById('ag-tel').value) document.getElementById('ag-tel').value = l.telefone || '';
+}
+
+function agOpen(id){
+  agEditId = id || null;
+  const a = id ? state.agenda.find(x=>x.id===id) : null;
+  if(id && !a) return;
+  document.getElementById('mod-ag-t').textContent = a ? 'Editar compromisso' : 'Novo compromisso';
+  let ini;
+  if(a){ ini = new Date(a.inicio); }
+  else { ini = new Date(); ini.setMinutes(0,0,0); ini.setHours(ini.getHours()+1); if(agSel){ const p = agSel.split('-').map(Number); ini = new Date(p[0], p[1]-1, p[2], ini.getHours(), 0, 0); } }
+  const dur = (a && a.fim) ? Math.max(15, Math.round((new Date(a.fim)-ini)/60000)) : 60;
+  const v = (i,val)=>{ document.getElementById(i).value = val; };
+  v('ag-tipo', a?a.tipo:'Visita ao plantão'); v('ag-assunto', (a && a.titulo!==a.tipo) ? a.titulo : '');
+  v('ag-cliente', a?a.cliente:''); v('ag-leadid', a?(a.leadId||''):''); v('ag-tel', a?a.telefone:'');
+  v('ag-data', agDia(ini)); v('ag-hora', agHora(ini)); v('ag-dur', dur);
+  v('ag-local', a?a.local:''); v('ag-status', a?a.status:'Agendado');
+  v('ag-lemb', a?a.lembreteMin:60); v('ag-obs', a?a.observacoes:'');
+  document.getElementById('ag-leads-dl').innerHTML = state.leads.map(l=>'<option value="'+agEsc(l.nome)+'"></option>').join('');
+  document.getElementById('mod-ag').classList.add('show');
+}
+
+async function agSave(){
+  const g = i=>document.getElementById(i).value.trim();
+  const cliente = g('ag-cliente'), data = g('ag-data'), hora = g('ag-hora');
+  if(!cliente){ toast('Informe o cliente', true); return; }
+  if(!data || !hora){ toast('Informe a data e o horário', true); return; }
+  const ini = new Date(data+'T'+hora+':00');
+  if(isNaN(ini.getTime())){ toast('Data ou horário inválido', true); return; }
+  const dur = Math.max(15, parseInt(g('ag-dur'),10) || 60);
+  const tipo = g('ag-tipo');
+  const a = {titulo:g('ag-assunto')||tipo, tipo:tipo, leadId:parseInt(g('ag-leadid'),10)||0, cliente:cliente, telefone:g('ag-tel'), local:g('ag-local'), inicio:ini.toISOString(), fim:new Date(ini.getTime()+dur*60000).toISOString(), status:g('ag-status'), lembreteMin:parseInt(g('ag-lemb'),10)||0, observacoes:g('ag-obs')};
+  const iniMs = ini.getTime(), fimMs = new Date(a.fim).getTime();
+  const conf = agAtivo(a) ? state.agenda.find(x=>x.id!==agEditId && agAtivo(x) && new Date(x.inicio).getTime()<fimMs && new Date(x.fim||x.inicio).getTime()>iniMs) : null;
+  const btn = document.getElementById('ag-save'); btn.disabled = true;
+  try{
+    if(agEditId){
+      const ok = await sbUpdate('agenda', agEditId, mapAgendaToDB(a));
+      if(!ok){ toast('Erro ao salvar. Verifique a conexão', true); return; }
+      Object.assign(state.agenda.find(x=>x.id===agEditId), a);
+    } else {
+      const r = await sbInsert('agenda', mapAgendaToDB(a));
+      if(!r || !r[0]){ toast('Erro ao salvar. Verifique a conexão', true); return; }
+      a.id = r[0].id; state.agenda.push(a);
+    }
+    saveState(); closeModal('mod-ag'); renderAgenda();
+    toast(conf ? '⚠️ Salvo, mas conflita com '+conf.cliente+' às '+agHora(new Date(conf.inicio)) : 'Compromisso salvo');
+  } finally { btn.disabled = false; }
+}
+
+async function agCycle(id){
+  const a = state.agenda.find(x=>x.id===id); if(!a) return;
+  const ordem = ['Agendado','Confirmado','Realizado'];
+  const antigo = a.status; a.status = ordem[(ordem.indexOf(antigo)+1) % ordem.length];
+  renderAgenda();
+  const ok = await sbUpdate('agenda', id, {status:a.status});
+  if(!ok){ a.status = antigo; renderAgenda(); toast('Erro ao atualizar o status', true); } else saveState();
+}
+
+async function agDel(id){
+  if(!confirm('Excluir este compromisso?')) return;
+  const ok = await sbDelete('agenda', id);
+  if(!ok){ toast('Erro ao excluir', true); return; }
+  state.agenda = state.agenda.filter(x=>x.id!==id); saveState(); renderAgenda(); toast('Compromisso excluído');
+}
+
+/* ---- Google Agenda / .ics ---- */
+function agIcsDate(iso){ return new Date(iso).toISOString().replace(/[-:]|\.\d{3}/g, ''); }
+function agFim(a){ return a.fim || new Date(new Date(a.inicio).getTime()+3600000).toISOString(); }
+function agDetalhes(a){ return [a.tipo, 'Cliente: '+a.cliente+(a.telefone?' — '+a.telefone:''), a.observacoes].filter(Boolean).join('\n'); }
+function agGoogleUrl(a){
+  const q = new URLSearchParams({action:'TEMPLATE', text:a.titulo+' — '+a.cliente, dates:agIcsDate(a.inicio)+'/'+agIcsDate(agFim(a)), details:agDetalhes(a), location:a.local||''});
+  return 'https://calendar.google.com/calendar/render?'+q.toString();
+}
+function agGoogle(id){
+  const a = state.agenda.find(x=>x.id===id); if(!a) return;
+  window.open(agGoogleUrl(a), '_blank', 'noopener');
+}
+function agIcsEsc(s){ return String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n'); }
+function agIcsText(a){
+  const L = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CRM Matheus//Agenda//PT','CALSCALE:GREGORIAN','BEGIN:VEVENT',
+    'UID:agenda-'+a.id+'@crm-matheus','DTSTAMP:'+agIcsDate(new Date().toISOString()),'DTSTART:'+agIcsDate(a.inicio),'DTEND:'+agIcsDate(agFim(a)),
+    'SUMMARY:'+agIcsEsc(a.titulo+' — '+a.cliente),'LOCATION:'+agIcsEsc(a.local),'DESCRIPTION:'+agIcsEsc(agDetalhes(a))];
+  if(a.lembreteMin>0) L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Lembrete','TRIGGER:-PT'+a.lembreteMin+'M','END:VALARM');
+  L.push('END:VEVENT','END:VCALENDAR');
+  return L.join('\r\n');
+}
+function agIcs(id){
+  const a = state.agenda.find(x=>x.id===id); if(!a) return;
+  const url = URL.createObjectURL(new Blob([agIcsText(a)], {type:'text/calendar;charset=utf-8'}));
+  const el = document.createElement('a');
+  el.href = url; el.download = 'compromisso-'+a.id+'.ics';
+  document.body.appendChild(el); el.click(); el.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1500);
+}
+
+/* ---- Lembretes dentro do CRM (som + aviso + notificação do navegador) ---- */
+function agBeep(){
+  try{
+    const c = new (window.AudioContext || window.webkitAudioContext)();
+    const o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination); o.frequency.value = 660; g.gain.value = .25; o.start();
+    setTimeout(()=>{ o.frequency.value = 880; }, 160);
+    setTimeout(()=>{ o.stop(); c.close(); }, 420);
+  }catch(e){}
+}
+function agCheckReminders(){
+  if(!state.agenda || !state.agenda.length) return;
+  const now = Date.now();
+  state.agenda.forEach(a=>{
+    if(!agAtivo(a) || !(a.lembreteMin>0)) return;
+    const ini = new Date(a.inicio).getTime();
+    if(now < ini - a.lembreteMin*60000 || now > ini + 15*60000) return;
+    const key = 'ag_n_'+a.id+'_'+a.inicio;
+    if(sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, '1');
+    const hh = agHora(new Date(a.inicio));
+    agBeep();
+    toast('⏰ '+a.tipo+' com '+a.cliente+' às '+hh+(a.local?' — '+a.local:''));
+    if('Notification' in window && Notification.permission === 'granted'){
+      new Notification('⏰ Compromisso às '+hh, {body:a.cliente+(a.local?'\n📍 '+a.local:'')});
+    }
+  });
+}
+function startAgendaReminders(){
+  if(agTimer) clearInterval(agTimer);
+  agCheckReminders();
+  agTimer = setInterval(agCheckReminders, 30000);
+}
+
+
 // ─── SEARCHABLE LEAD DROPDOWN ───────────────────────────────────────
 let cxLeadSearchOpen = false;
 
@@ -6850,6 +7229,7 @@ function startCRM(){
   boot();
   requestNotificationPermission();
   startLeadPolling();
+  startAgendaReminders();
 
   // Sync com nuvem em background
   (async function(){
