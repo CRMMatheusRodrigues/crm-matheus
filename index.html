@@ -1642,6 +1642,11 @@ td{
 .fld-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 
 /* ===== AGENDA ===== */
+.ag-per{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--text-2);margin-bottom:12px}
+.ag-per .inp{width:auto;padding:6px 10px;font-size:12.5px}
+.ag-resumo{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.ag-resumo span{background:var(--surface-3);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--text-2)}
+.ag-resumo b{color:var(--primary);font-size:14px;margin-right:4px}
 .ag-gcal{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-top:22px;font-size:13px;color:var(--text-2)}
 .ag-gcal .ag-btn{padding:8px 14px;font-size:12.5px}
 .ag-gcal .ag-btn:disabled{color:var(--green);border-color:var(--green);cursor:default}
@@ -3012,6 +3017,7 @@ document.addEventListener('keydown', dismissWelcome, {once:true});
               <button class="ag-tab" id="agt-hoje" onclick="agTab('hoje')">Hoje</button>
               <button class="ag-tab" id="agt-passados" onclick="agTab('passados')">Histórico</button>
             </div>
+            <div id="ag-per"></div>
             <div id="ag-sel-bar"></div>
             <div id="ag-list"></div>
           </div>
@@ -6604,6 +6610,7 @@ function setCxCredito(v){
    AGENDA
    ============================================================ */
 let agEditId = null, agFiltro = 'proximos', agSel = null, agTimer = null;
+let agPerIni = agDia(new Date(Date.now()-30*864e5)), agPerFim = agDia(new Date());
 let agMes = (()=>{ const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), 1); })();
 
 function agEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -6643,7 +6650,7 @@ function agItem(a){
     +   '<div class="ag-btns">'
     +     '<button class="ag-btn" onclick="agGoogle('+a.id+')" title="Adicionar ao Google Agenda: lembrete no Gmail e no celular">Google Agenda</button>'
     +     '<button class="ag-btn" onclick="agIcs('+a.id+')" title="Baixar arquivo .ics (Apple, Outlook, Google)">.ics</button>'
-    +     '<button class="ag-btn" onclick="agOpen('+a.id+')">Editar</button>'
+    +     (a.status!=='Realizado' ? '<button class="ag-btn" onclick="agQuick('+a.id+',\'Realizado\')">✓ Realizado</button>' : '')+'<button class="ag-btn" onclick="agOpen('+a.id+')">Editar</button>'
     +     '<button class="ag-btn ag-del" onclick="agDel('+a.id+')">Excluir</button>'
     +   '</div>'
     + '</div></div>';
@@ -6687,14 +6694,23 @@ function renderAgenda(){
   gcalUi();
 
   const proximo = a => agAtivo(a) && new Date(a.fim||a.inicio) >= now;
-  let lista, rotulo = '';
+  let lista, rotulo = '', resumo = '';
   if(agSel){ lista = all.filter(a=>agDia(new Date(a.inicio))===agSel); rotulo = 'Dia '+agSel.split('-').reverse().join('/'); }
   else if(agFiltro==='hoje'){ lista = all.filter(a=>agDia(new Date(a.inicio))===hoje); }
-  else if(agFiltro==='passados'){ lista = all.filter(a=>!proximo(a)).reverse().slice(0,60); }
+  else if(agFiltro==='passados'){
+    lista = all.filter(a=>{ const k = agDia(new Date(a.inicio)); return !proximo(a) && k>=agPerIni && k<=agPerFim; }).reverse();
+    const nReal = lista.filter(a=>a.status==='Realizado').length;
+    const nPend = lista.filter(a=>a.status==='Agendado' || a.status==='Confirmado').length;
+    resumo = '<div class="ag-resumo"><span><b>'+nReal+'</b> realizado'+(nReal===1?'':'s')+'</span><span><b>'+nPend+'</b> sem marcação</span><span><b>'+lista.length+'</b> no total</span></div>';
+  }
   else { lista = all.filter(proximo); }
 
   ['proximos','hoje','passados'].forEach(t=>{ const b = document.getElementById('agt-'+t); if(b) b.classList.toggle('on', !agSel && agFiltro===t); });
   document.getElementById('ag-sel-bar').innerHTML = agSel ? '<div class="ag-selbar"><span>Mostrando '+rotulo+'</span><button onclick="agPick(\''+agSel+'\')">Limpar filtro</button></div>' : '';
+  const per = document.getElementById('ag-per');
+  if(per) per.innerHTML = (agFiltro==='passados' && !agSel)
+    ? '<div class="ag-per"><span>De</span><input class="inp" type="date" value="'+agPerIni+'" onchange="agSetPer(\'ini\',this.value)"><span>até</span><input class="inp" type="date" value="'+agPerFim+'" onchange="agSetPer(\'fim\',this.value)"></div>'+resumo
+    : '';
 
   let html = '', ultimo = '';
   lista.forEach(a=>{
@@ -6702,9 +6718,23 @@ function renderAgenda(){
     if(k!==ultimo){ html += '<div class="ag-day">'+agEsc(agDayLabel(k))+'</div>'; ultimo = k; }
     html += agItem(a);
   });
-  document.getElementById('ag-list').innerHTML = html || '<div class="ag-empty">Nenhum compromisso por aqui. Clique em "Novo Compromisso" para agendar.</div>';
+  document.getElementById('ag-list').innerHTML = html || '<div class="ag-empty">' + (agFiltro==='passados' && !agSel ? 'Nenhum compromisso neste período.' : 'Nenhum compromisso por aqui. Clique em "Novo Compromisso" para agendar.') + '</div>';
 }
 
+function agSetPer(which, v){
+  if(!v) return;
+  if(which==='ini') agPerIni = v; else agPerFim = v;
+  if(agPerIni > agPerFim){ const t = agPerIni; agPerIni = agPerFim; agPerFim = t; }
+  renderAgenda();
+}
+async function agQuick(id, st){
+  const a = state.agenda.find(x=>x.id===id); if(!a) return;
+  const antigo = a.status; a.status = st; renderAgenda();
+  const ok = await sbUpdate('agenda', id, {status:st});
+  if(!ok){ a.status = antigo; renderAgenda(); toast('Erro ao atualizar o status', true); return; }
+  saveState();
+  toast(st==='Realizado' ? 'Compromisso marcado como realizado' : 'Status atualizado');
+}
 function agTab(f){ agFiltro = f; agSel = null; renderAgenda(); }
 function agPick(k){ agSel = (agSel===k) ? null : k; renderAgenda(); }
 function agMonth(delta){ agMes = new Date(agMes.getFullYear(), agMes.getMonth()+delta, 1); renderAgenda(); }
