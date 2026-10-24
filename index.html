@@ -6692,6 +6692,7 @@ function renderAgenda(){
   agSidebar(nHoje);
   agRenderCal(all);
   gcalUi();
+  gcalSilent();
 
   const proximo = a => agAtivo(a) && new Date(a.fim||a.inicio) >= now;
   let lista, rotulo = '', resumo = '';
@@ -6863,20 +6864,35 @@ function gcalUi(){
     b.textContent = 'Conectar Google Agenda'; b.disabled = false;
   }
 }
+let gcalQuiet = false, gcalSilentTry = 0;
+function gcalInitClient(){
+  if(gcalClient) return;
+  gcalClient = google.accounts.oauth2.initTokenClient({
+    client_id: GCAL_CLIENT_ID, scope: GCAL_SCOPE,
+    callback: r => {
+      const quiet = gcalQuiet; gcalQuiet = false;
+      if(r.error){ if(!quiet) toast('Google: não foi possível conectar', true); gcalUi(); return; }
+      gcalToken = r.access_token;
+      gcalExp = Date.now() + (parseInt(r.expires_in,10) || 3600)*1000 - 60000;
+      localStorage.setItem('ag_gcal_on','1'); gcalUi();
+      if(!quiet) toast('Google Agenda conectado');
+    },
+    error_callback: () => { const quiet = gcalQuiet; gcalQuiet = false; if(!quiet) toast('Google: não foi possível conectar', true); gcalUi(); }
+  });
+}
 function gcalConnect(){
   if(!window.google || !google.accounts || !google.accounts.oauth2){ toast('Google ainda carregando. Tente de novo em instantes', true); return; }
-  if(!gcalClient){
-    gcalClient = google.accounts.oauth2.initTokenClient({
-      client_id: GCAL_CLIENT_ID, scope: GCAL_SCOPE,
-      callback: r => {
-        if(r.error){ toast('Google: não foi possível conectar', true); return; }
-        gcalToken = r.access_token;
-        gcalExp = Date.now() + (parseInt(r.expires_in,10) || 3600)*1000 - 60000;
-        localStorage.setItem('ag_gcal_on','1'); gcalUi(); toast('Google Agenda conectado');
-      }
-    });
-  }
+  gcalInitClient(); gcalQuiet = false;
   gcalClient.requestAccessToken();
+}
+/* Reconexão silenciosa: se você já autorizou antes, renova sozinho (sem janela). Tenta no máximo a cada 5 min. */
+function gcalSilent(){
+  if(!localStorage.getItem('ag_gcal_on') || gcalOn()) return;
+  if(!window.google || !google.accounts || !google.accounts.oauth2) return;
+  if(Date.now() - gcalSilentTry < 5*60000) return;
+  gcalSilentTry = Date.now();
+  gcalInitClient(); gcalQuiet = true;
+  gcalClient.requestAccessToken({prompt:''});
 }
 function gcalReq(method, id, body){
   const url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events' + (id ? '/'+encodeURIComponent(id) : '');
