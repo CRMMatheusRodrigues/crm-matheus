@@ -1642,6 +1642,9 @@ td{
 .fld-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 
 /* ===== AGENDA ===== */
+.ag-gcal{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-top:22px;font-size:13px;color:var(--text-2)}
+.ag-gcal .ag-btn{padding:8px 14px;font-size:12.5px}
+.ag-gcal .ag-btn:disabled{color:var(--green);border-color:var(--green);cursor:default}
 .ag-grid{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start;margin-top:22px}
 @media(max-width:1000px){.ag-grid{grid-template-columns:1fr}}
 .ag-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.3)}
@@ -2023,6 +2026,7 @@ canvas{cursor:default}
   .kpi-g{grid-template-columns:1fr}
 }
 </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -2995,7 +2999,8 @@ document.addEventListener('keydown', dismissWelcome, {once:true});
           <div class="kpi" style="--kc:var(--blue);--kc-bg:rgba(96,165,250,.1)"><div class="kpi-glow"></div><div class="kpi-head"><div class="kpi-icon"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div><div class="kpi-val" id="kv-ag2">0</div><div class="kpi-lbl">Próximos 7 dias</div></div>
           <div class="kpi" style="--kc:var(--green);--kc-bg:rgba(52,211,153,.1)"><div class="kpi-glow"></div><div class="kpi-head"><div class="kpi-icon"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div></div><div class="kpi-val" id="kv-ag3">0</div><div class="kpi-lbl">A confirmar</div></div>
         </div>
-        <div class="ag-grid">
+        <div class="ag-gcal"><span id="ag-gcal-st"></span><button class="ag-btn" id="ag-gcal-btn" onclick="gcalConnect()">Conectar Google Agenda</button></div>
+        <div class="ag-grid" style="margin-top:14px">
           <div class="ag-card">
             <div class="ag-cal-h"><button class="ag-nav" onclick="agMonth(-1)">&#8249;</button><div id="ag-cal-t"></div><button class="ag-nav" onclick="agMonth(1)">&#8250;</button></div>
             <div class="ag-cal" id="ag-cal"></div>
@@ -6609,7 +6614,7 @@ function agAtivo(a){ return a.status==='Agendado' || a.status==='Confirmado'; }
 function agKey(st){ return ({'Agendado':'agendado','Confirmado':'confirmado','Realizado':'realizado','Cancelado':'cancelado','Não compareceu':'nao'})[st] || 'agendado'; }
 
 function mapAgendaFromDB(r){
-  return {id:r.id, titulo:r.titulo||'', tipo:r.tipo||'Visita', leadId:r.lead_id||0, cliente:r.cliente||'', telefone:r.telefone||'', local:r.local||'', inicio:r.inicio, fim:r.fim||'', status:r.status||'Agendado', lembreteMin:(r.lembrete_min==null?60:r.lembrete_min), observacoes:r.observacoes||''};
+  return {id:r.id, gcalId:r.gcal_event_id||'', titulo:r.titulo||'', tipo:r.tipo||'Visita', leadId:r.lead_id||0, cliente:r.cliente||'', telefone:r.telefone||'', local:r.local||'', inicio:r.inicio, fim:r.fim||'', status:r.status||'Agendado', lembreteMin:(r.lembrete_min==null?60:r.lembrete_min), observacoes:r.observacoes||''};
 }
 function mapAgendaToDB(a){
   return {titulo:a.titulo, tipo:a.tipo, lead_id:a.leadId||null, cliente:a.cliente, telefone:a.telefone||null, local:a.local||null, inicio:a.inicio, fim:a.fim||null, status:a.status, lembrete_min:a.lembreteMin, observacoes:a.observacoes||null};
@@ -6628,7 +6633,7 @@ function agItem(a){
   return '<div class="ag-item ag-s-'+key+'">'
     + '<div class="ag-time"><b>'+agHora(ini)+'</b>'+(fim?'<span>até '+agHora(fim)+'</span>':'')+'</div>'
     + '<div class="ag-main">'
-    +   '<div class="ag-t">'+agEsc(a.titulo)+'<span class="ag-tipo">'+agEsc(a.tipo)+'</span></div>'
+    +   '<div class="ag-t">'+agEsc(a.titulo)+'<span class="ag-tipo">'+agEsc(a.tipo)+'</span>'+(a.gcalId?'<span class="ag-tipo" style="color:var(--green)">Google ✓</span>':'')+'</div>'
     +   '<div class="ag-line">'+agEsc(a.cliente)+(a.telefone?' · '+agEsc(a.telefone):'')+'</div>'
     +   (a.local?'<div class="ag-line">'+agEsc(a.local)+maps+'</div>':'')
     +   (a.observacoes?'<div class="ag-line" style="opacity:.8">'+agEsc(a.observacoes)+'</div>':'')
@@ -6679,6 +6684,7 @@ function renderAgenda(){
   setKpi('kv-ag1', nHoje); setKpi('kv-ag2', n7); setKpi('kv-ag3', nConf);
   agSidebar(nHoje);
   agRenderCal(all);
+  gcalUi();
 
   const proximo = a => agAtivo(a) && new Date(a.fim||a.inicio) >= now;
   let lista, rotulo = '';
@@ -6753,8 +6759,11 @@ async function agSave(){
       if(!r || !r[0]){ toast('Erro ao salvar. Verifique a conexão', true); return; }
       a.id = r[0].id; state.agenda.push(a);
     }
+    const item = state.agenda.find(x=>x.id===(agEditId||a.id)) || a;
+    const g = await agSyncGoogle(item);
     saveState(); closeModal('mod-ag'); renderAgenda();
-    toast(conf ? '⚠️ Salvo, mas conflita com '+conf.cliente+' às '+agHora(new Date(conf.inicio)) : 'Compromisso salvo');
+    const extra = g==='off' ? '' : g==='ok' ? ' · Google Agenda atualizado' : g==='expired' ? ' · Google desconectado: clique em Conectar' : ' · falhou ao enviar ao Google';
+    toast((conf ? '⚠️ Conflita com '+conf.cliente+' às '+agHora(new Date(conf.inicio))+'. ' : '') + 'Compromisso salvo' + extra);
   } finally { btn.disabled = false; }
 }
 
@@ -6769,6 +6778,8 @@ async function agCycle(id){
 
 async function agDel(id){
   if(!confirm('Excluir este compromisso?')) return;
+  const old = state.agenda.find(x=>x.id===id);
+  if(old && old.gcalId) await gcalRemove(old.gcalId);
   const ok = await sbDelete('agenda', id);
   if(!ok){ toast('Erro ao excluir', true); return; }
   state.agenda = state.agenda.filter(x=>x.id!==id); saveState(); renderAgenda(); toast('Compromisso excluído');
@@ -6805,6 +6816,76 @@ function agIcs(id){
 }
 
 /* ---- Lembretes dentro do CRM (som + aviso + notificação do navegador) ---- */
+/* ---- Google Agenda (sincronização automática) ---- */
+const GCAL_CLIENT_ID = '434051706782-2p086vbs1uhepo5ivn9qajgcvebqgi6b.apps.googleusercontent.com';
+const GCAL_SCOPE = 'https://www.googleapis.com/auth/calendar.events';
+const GCAL_TZ = 'America/Sao_Paulo';
+let gcalToken = null, gcalExp = 0, gcalClient = null;
+function gcalOn(){ return !!gcalToken && Date.now() < gcalExp; }
+function gcalUi(){
+  const b = document.getElementById('ag-gcal-btn'), t = document.getElementById('ag-gcal-st');
+  if(!b || !t) return;
+  if(gcalOn()){
+    t.textContent = 'Google Agenda conectado. Os compromissos vão para o seu calendário, com lembrete por e-mail (Gmail) e no celular.';
+    b.textContent = 'Conectado'; b.disabled = true;
+  } else {
+    t.textContent = localStorage.getItem('ag_gcal_on') ? 'A conexão com o Google expirou. Reconecte para sincronizar.' : 'Conecte para enviar seus compromissos ao Google Agenda, com lembrete por e-mail e no celular.';
+    b.textContent = 'Conectar Google Agenda'; b.disabled = false;
+  }
+}
+function gcalConnect(){
+  if(!window.google || !google.accounts || !google.accounts.oauth2){ toast('Google ainda carregando. Tente de novo em instantes', true); return; }
+  if(!gcalClient){
+    gcalClient = google.accounts.oauth2.initTokenClient({
+      client_id: GCAL_CLIENT_ID, scope: GCAL_SCOPE,
+      callback: r => {
+        if(r.error){ toast('Google: não foi possível conectar', true); return; }
+        gcalToken = r.access_token;
+        gcalExp = Date.now() + (parseInt(r.expires_in,10) || 3600)*1000 - 60000;
+        localStorage.setItem('ag_gcal_on','1'); gcalUi(); toast('Google Agenda conectado');
+      }
+    });
+  }
+  gcalClient.requestAccessToken();
+}
+function gcalReq(method, id, body){
+  const url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events' + (id ? '/'+encodeURIComponent(id) : '');
+  return fetch(url, {method, headers:{'Authorization':'Bearer '+gcalToken,'Content-Type':'application/json'}, body: body ? JSON.stringify(body) : undefined})
+    .then(r => { if(r.status===401){ gcalToken = null; gcalUi(); } return r; });
+}
+function gcalBody(a){
+  const mins = a.lembreteMin > 0 ? a.lembreteMin : 0;
+  return {
+    summary: a.titulo+' — '+a.cliente,
+    location: a.local || '',
+    description: agDetalhes(a),
+    start: {dateTime: new Date(a.inicio).toISOString(), timeZone: GCAL_TZ},
+    end: {dateTime: new Date(agFim(a)).toISOString(), timeZone: GCAL_TZ},
+    reminders: {useDefault:false, overrides: mins ? [{method:'email', minutes:mins},{method:'popup', minutes:mins}] : []}
+  };
+}
+async function gcalRemove(id){
+  if(!id || !gcalOn()) return;
+  try{ await gcalReq('DELETE', id); }catch(e){}
+}
+async function agSyncGoogle(a){
+  if(!gcalOn()) return 'off';
+  try{
+    if(a.status === 'Cancelado'){
+      if(a.gcalId){ await gcalRemove(a.gcalId); a.gcalId = ''; await sbUpdate('agenda', a.id, {gcal_event_id:null}); }
+      return 'ok';
+    }
+    let r = await gcalReq(a.gcalId ? 'PATCH' : 'POST', a.gcalId, gcalBody(a));
+    if(r.status === 404 && a.gcalId){ r = await gcalReq('POST', null, gcalBody(a)); }
+    if(r.status === 401) return 'expired';
+    if(!r.ok) return 'erro';
+    const j = await r.json();
+    a.gcalId = j.id;
+    await sbUpdate('agenda', a.id, {gcal_event_id: j.id});
+    return 'ok';
+  }catch(e){ return 'erro'; }
+}
+
 function agBeep(){
   try{
     const c = new (window.AudioContext || window.webkitAudioContext)();
